@@ -1,20 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { fetchTodos } from './operations';
 
 const todosSlice = createSlice({
   // Ім'я слайсу
   name: 'todos',
   // Початковий стан редюсера слайсу
-  initialState: { items: [] },
+  initialState: { items: [], isLoading: false, error: null },
   // Об'єкт редюсерів
-  reducers: {
-    addTodo(state, { payload }) {
-      //   state.items = [...state.items, action.payload];
-      state.items.push(payload);
+  extraReducers: {
+    [fetchTodos.pending](state) {
+      state.isLoading = true;
     },
-    deleteTodo(state, { payload }) {
-      console.log('payload: ', payload);
-
-      state.items = state.items.filter(item => item.id !== payload);
+    [fetchTodos.fulfilled](state, { payload }) {
+      state.items = payload;
+      state.isLoading = false;
+    },
+    [fetchTodos.rejected](state, { payload }) {
+      state.isLoading = false;
+      state.error = payload;
     },
   },
 });
